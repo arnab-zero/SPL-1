@@ -1,0 +1,8 @@
+## Online resources used to learn bfs : 
+
+1. javaTpoint (n.d.) Available at: https://www.javatpoint.com/breadth-first-search-algorithm
+2. HackerEarth (n.d.) Available at: https://www.hackerearth.com/practice/algorithms/graphs/breadth-first-search/tutorial/
+
+## Reference book(s) : 
+1. Laaksonen, Antti(2018) Competitive Programmer's Handbook, pp. 119-120
+
