@@ -1,0 +1,7 @@
+## Online resources used to learn dfs : 
+
+1. A S, Ravikiran (n.d.) Available at: https://www.simplilearn.com/tutorials/data-structure-tutorial/dfs-algorithm
+1. HackerEarth (n.d.) Available at: https://www.hackerearth.com/practice/algorithms/graphs/depth-first-search/tutorial/
+
+## Reference book(s) : 
+1. Laaksonen, Antti(2018) Competitive Programmer's Handbook, pp. 117-118
