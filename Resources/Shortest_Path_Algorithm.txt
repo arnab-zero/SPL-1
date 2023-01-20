@@ -1,0 +1,7 @@
+## Online resources used to learn about shortest path algorithms
+ 1. HackerEarth (n.d.) Available at: https://www.hackerearth.com/practice/algorithms/graphs/shortest-path-algorithms/tutorial/#:~:text=The%20shortest%20path%20problem%20is,weights%20can%20take%20any%20value.
+
+## Reference books used to learn about shortest path algorithms
+ 1. Laaksonen, Antti(2018) Competitive Programmer's Handbook, pp. 123-129
+
+
