@@ -7,22 +7,27 @@ using namespace std;
 #define tab "\t"
 
 vi vis(100, 0);         // if a vertex is visited or not
-vi start_ts(100, -1);
-vi end_ts(100, -1);
+vi start_ts(100);
+vi end_ts(100);
 stack<int> s;           
 int prev, timestamp = -1;
 
 // DFS function
 void dfs(vector<vi> &v){
 
-    if(s.empty())
-        return;
+    // if(s.empty())
+    //     return;
 
     int node = s.top();
     s.pop();
 
-    if(!vis[node])          // checking if the node is visited previously.
+    start_ts[node] = ++timestamp;
+
+    if(!vis[node]){          // checking if the node is visited previously.
         cout<<" --> "<<node;
+        
+    }
+    
     ++vis[node];
 
     for(auto i: v[node]){
@@ -30,7 +35,10 @@ void dfs(vector<vi> &v){
             s.push(i);      // inserting the node to stack.
     }
 
-    dfs(v);         // recursive call to dfs.
+    if(!s.empty())
+        dfs(v);         // recursive call to dfs.
+
+    end_ts[node] = ++timestamp;
 }
 
 // main function
@@ -50,8 +58,15 @@ int main(void){
 
     cin>>start;
     s.push(start);   // inserting starting node to stack.
+    dfs(v);          // DFS function call
+    cout<<endl;
 
-    dfs(v);         // DFS function call
+    cout<<"done"<<endl;
+
+    cout<<"Timestamps: "<<endl;
+    for(int i=1; i<n+1; ++i){
+        cout<<"For vertex "<<i<<"\tstart: "<<start_ts[i]<<"\tend: "<<end_ts[i]<<endl;
+    }
 
     return 0;
 }
