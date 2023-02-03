@@ -3,38 +3,47 @@ using namespace std;
 
 #define vi vector<int>
 #define pb push_back
+#define pii pair<int, int>
 #define spc " "
 #define tab "\t"
 
 vi vis(100);          // flags to note if a node is visited.
 vi dis(100, INT_MAX); // initially distance of each node from the starting node is infinite.
-queue<int> q;         // queue to maintain sequence of nodes that will be visited later.
+priority_queue<pii, greater<pii>> pq;         // queue to maintain sequence of nodes that will be visited later.
+int start;          // source node.
 
 // function for dijkstra's algorithm
-void dijkstra(vector<vector<pair<int, int>>> &v, int node)
+void dijkstra(vector<vector<pii>> &v)
 {
-    if(vis[node])
+    if(pq.empty())      // if priority queue ends up to be empty, we stop recursion
         return;
 
-    for(int i=0; i<v[node].size(); ++i){
-        int current = v[node][i].first;
+    pii node = pq.top();    // we take the first element from the min-priority queue
+    pq.pop();       // pop the first element
 
-        if(dis[node] + v[node][i].second < dis[current])
-            dis[current] = dis[node] + v[node][i].second;
-    }
+    if(vis[node.second])
+        return;
 
-    vis[node] = 1;
+    for(int i=0; i<v[node.second].size(); ++i){
+        int current = v[node][i].second;       // node associated by edge 
 
-    int maxDistance = 0, newNode;
-
-    for(int i=0; i<v[node].size(); ++i){
-        if(v[node][i].second > maxDistance){
-            maxDistance = v[node][i].second;
-            newNode = v[node][i].first;
+        if(node.first + v[node][i].first < dis[current]){
+            dis[current] = dis[node] + v[node][i].first;
+            pq.push({dis[current], current});
         }
     }
 
-    dijkstra(v, newNode);
+    vis[node.second] = 1;
+
+    // int maxDistance = 0, newNode;
+    // for(int i=0; i<v[node].size(); ++i){
+    //     if(v[node][i].second > maxDistance){
+    //         maxDistance = v[node][i].second;
+    //         newNode = v[node][i].first;
+    //     }
+    // }
+
+    dijkstra(v);
 }
 
 // main function
@@ -50,8 +59,8 @@ int main(void)
         int a, b, w; // a, b are connected vertices and w is the weight of the edge.
         cin >> a >> b >> w;
 
-        v[b].pb({a, w});
-        v[a].pb({b, w});
+        v[b].pb({w, a});        // as we will keep it arranged by the first element in priority queue
+        v[a].pb({w, b});
     }
 
     // for(int i=1; i<m+1; ++i){
@@ -60,15 +69,12 @@ int main(void)
     //     }
     // }
 
-    int start; // node to calculate distances from.
     cin >> start;
 
-    
     dis[start] = 0;
+    pq.push({0, start});    // pushing the source node to priority queue
 
-    // q.push(start);
-
-    dijkstra(v, start);
+    dijkstra(v);
 
     // print here.
 
