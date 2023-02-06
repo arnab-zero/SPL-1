@@ -30,10 +30,9 @@ void bfs(vector<vi> &v){
                 dis[i] = dis[node] + 1;
                 q.push(i);
             }
+            bfs(v);
         }
     }
-
-    bfs(v);
 }
 
 // main function
