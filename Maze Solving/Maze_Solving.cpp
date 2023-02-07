@@ -72,7 +72,7 @@ int main(void){
 		// save the vertex if it is start or end
 		if(mazeLine[0][j] == 'S')
 			start = nodeCounter;
-		else if(mazeLine[0][j] == 'E')
+		else if(mazeLine[0][j] == 'D')
 			finish = nodeCounter;
 	}
 
