@@ -3,80 +3,72 @@ using namespace std;
 
 #define vi vector<int>
 #define pb push_back
-#define pii pair<int, int>
 #define spc " "
 #define tab "\t"
+typedef long long int lli;
 
-vi vis(100);          // flags to note if a node is visited.
-vi dis(100, INT_MAX); // initially distance of each node from the starting node is infinite.
-priority_queue<pii, greater<pii>> pq;         // queue to maintain sequence of nodes that will be visited later.
-int start;          // source node.
+vector<int> dis(100, INT_MAX);
 
-// function for dijkstra's algorithm
-void dijkstra(vector<vector<pii>> &v)
-{
-    if(pq.empty())      // if priority queue ends up to be empty, we stop recursion
-        return;
 
-    pii node = pq.top();    // we take the first element from the min-priority queue
-    pq.pop();       // pop the first element
+// Function for Dijkstra's algorithm
+void dijkstra(vector<vector<pair<int,int> > > &v, int source){
 
-    if(vis[node.second])
-        return;
+    priority_queue<int> pq;
+    pq.push(source);
 
-    for(int i=0; i<v[node.second].size(); ++i){
-        int current = v[node][i].second;       // node associated by edge 
+    dis[source] = 0;
 
-        if(node.first + v[node][i].first < dis[current]){
-            dis[current] = dis[node] + v[node][i].first;
-            pq.push({dis[current], current});
+    while(!pq.empty()){
+        int m = pq.top();
+        pq.pop();
+
+        for(auto p: v[m]){
+            int n = p.first;
+            if(dis[n] > dis[m]+p.second){
+                dis[n] = dis[m] + p.second;
+                pq.push(n);
+            }
         }
     }
-
-    vis[node.second] = 1;
-
-    // int maxDistance = 0, newNode;
-    // for(int i=0; i<v[node].size(); ++i){
-    //     if(v[node][i].second > maxDistance){
-    //         maxDistance = v[node][i].second;
-    //         newNode = v[node][i].first;
-    //     }
-    // }
-
-    dijkstra(v);
 }
 
-// main function
-int main(void)
-{
-    int m, n; // m = number of edges, n = number of vertices;
-    cin >> n >> m;
 
-    vector<vector<pair<int, int>>> v(m + 1); // 2d vector of pairs to store the weighted edges.
+// Function to print the distance of shortest path of vertices from the source vertex
+void print_shortest_distances(int number_of_vertices){
+    for(int i=1; i<number_of_vertices+1; ++i){
+        cout<<"Shortest distance of vertex "<<i<<" from source is "<<dis[i]<<endl;
+    }
+}
 
-    for (int i = 1; i < m + 1; ++i)
-    {
-        int a, b, w; // a, b are connected vertices and w is the weight of the edge.
-        cin >> a >> b >> w;
 
-        v[b].pb({w, a});        // as we will keep it arranged by the first element in priority queue
-        v[a].pb({w, b});
+// main functionS
+int main(void){
+
+    int number_of_vertices, number_of_edges;
+    cin>>number_of_vertices>>number_of_edges;
+
+    vector<vector<pair<int,int> > > v(number_of_vertices+1);
+    for(int i=0; i<number_of_edges; ++i){
+        int a, b, w;
+        cin>>a>>b>>w;
+        v[a].pb({b,w});
+        v[b].pb({a,w});
     }
 
-    // for(int i=1; i<m+1; ++i){
-    //     for(int j=0; j<v[i].size(); ++j){
-    //         cout<<i<<tab<<v[i][j].first<<tab<<v[i][j].second<<endl;
+    // cout<<"Printing the list to check."<<endl;
+    // for(int i=1; i<number_of_vertices+1; ++i){
+    //     cout<<i<<endl;
+    //     for(auto p: v[i]){
+    //         cout<<p.first<<spc<<p.second<<endl;
     //     }
     // }
 
-    cin >> start;
+    int source;
+    cout<<"Enter the source vertex: ";
+    cin>>source;
 
-    dis[start] = 0;
-    pq.push({0, start});    // pushing the source node to priority queue
-
-    dijkstra(v);
-
-    // print here.
+    dijkstra(v, source);
+    print_shortest_distances(number_of_vertices);
 
     return 0;
 }
