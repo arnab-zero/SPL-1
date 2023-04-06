@@ -3,72 +3,63 @@ using namespace std;
 
 #define vi vector<int>
 #define pb push_back
+#define pii pair<int, int>
 #define spc " "
 #define tab "\t"
 typedef long long int lli;
 
+vector<vector<pair<int, int>>> adj_list(100);
 vector<int> dis(100, INT_MAX);
 
 
-// Function for Dijkstra's algorithm
-void dijkstra(vector<vector<pair<int,int> > > &v, int source){
+void dijkstra(int vertices, int source){
 
-    priority_queue<int> pq;
-    pq.push(source);
+    priority_queue<pii, vector<pii>, greater<pii>> pq;
 
     dis[source] = 0;
+    pq.push({dis[source], source});
 
     while(!pq.empty()){
-        int m = pq.top();
+
+        int current = pq.top().second;
         pq.pop();
 
-        for(auto p: v[m]){
-            int n = p.first;
-            if(dis[n] > dis[m]+p.second){
-                dis[n] = dis[m] + p.second;
-                pq.push(n);
+        for(auto i: adj_list[current]){
+            
+            if(dis[current]+i.second < dis[i.first]){
+                dis[i.first] = dis[current]+i.second;
+                pq.push({dis[i.first], i.first});
             }
         }
     }
 }
 
 
-// Function to print the distance of shortest path of vertices from the source vertex
-void print_shortest_distances(int number_of_vertices){
-    for(int i=1; i<number_of_vertices+1; ++i){
-        cout<<"Shortest distance of vertex "<<i<<" from source is "<<dis[i]<<endl;
-    }
-}
-
-
-// main functionS
 int main(void){
 
-    int number_of_vertices, number_of_edges;
-    cin>>number_of_vertices>>number_of_edges;
+    int vertices;
+    cin>>vertices;
+    
+    int edges;
+    cin>>edges;
 
-    vector<vector<pair<int,int> > > v(number_of_vertices+1);
-    for(int i=0; i<number_of_edges; ++i){
-        int a, b, w;
-        cin>>a>>b>>w;
-        v[a].pb({b,w});
-        v[b].pb({a,w});
+    for(int i=0; i<edges; ++i){
+        int u, v, w;
+        cin>>u>>v>>w;
+        adj_list[u].pb({v,w});
     }
 
-    // cout<<"Printing the list to check."<<endl;
-    // for(int i=1; i<number_of_vertices+1; ++i){
-    //     cout<<i<<endl;
-    //     for(auto p: v[i]){
-    //         cout<<p.first<<spc<<p.second<<endl;
-    //     }
-    // }
-
     int source;
-    cout<<"Enter the source vertex: ";
     cin>>source;
 
-    dijkstra(v, source);
-    print_shortest_distances(number_of_vertices);
+    dijkstra(vertices, source);
+
+    for(int i=1; i<vertices+1; ++i){
+        if(dis[i]!=INT_MAX)
+            cout<<"Shortest distance to vertex "<<i<<" from vertex "<<source<<" is "<<dis[i]<<endl;
+        else 
+            cout<<"No path to vertex "<<i<<" from vertex "<<source<<endl;
+    }
 
     return 0;
 }
