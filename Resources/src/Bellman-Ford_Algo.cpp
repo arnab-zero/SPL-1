@@ -32,6 +32,19 @@ void bellman_ford_func(vector<vector<pair<int,int>>> &v){
         bellman_ford_func(v);
 }
 
+// Checks for negative cycles in the graph.
+bool check_negative_cycles(vector<vector<pair<int,int>>> &v){
+
+    for(int i=1; i<v.size(); ++i){
+        for(auto x: v[i]){
+            if(min_distance[i] + x.second < min_distance[x.first])         // minimum distance of first + given edge weight < minimum distance of second
+                return true;
+        }
+    }
+
+    return false;
+}
+
 
 int main(void){
     int m, n;   // m = number of edges, n = number of vertices;
@@ -66,6 +79,11 @@ int main(void){
     }
 
     bellman_ford_func(v);
+
+    if(check_negative_cycles(v)){
+        cout<<"Negative cycles exist in the input graph.\n";
+        return 0;
+    }
 
     for(int i=1; i<n+1; ++i){
         cout<<"Min distance for node-"<<i<<": "<<min_distance[i]<<endl;
