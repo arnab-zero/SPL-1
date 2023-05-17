@@ -1,1 +1,6 @@
-resource
+Online resources for Heuristic Search algorithms:
+
+## Papers
+1. L. Fua, D. Sunb, L.R. Rilett; Heuristic shortest path algorithms for transportation applications: State of the art. Available at: https://www.civil.uwaterloo.ca/itss/papers%5C2006-3%20%28Review%20of%20heuristic%20SPA%29.pdf
+
+
