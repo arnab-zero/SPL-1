@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include "A_Star_Search.h"
 using namespace std;
 
 #define vi vector<int>
@@ -44,6 +45,9 @@ void bfs(){
 
 // main function
 int main(void){
+
+	freopen("Maze_Input.txt", "r", stdin);
+
 	int row, col;
 	cout<<"Enter row and column count for the maze: ";
 	cin>>row>>col;
@@ -105,15 +109,15 @@ int main(void){
 	}
 
 	// Checking if the adjacency list output is correct
-	// for(i=0; i<nodeCounter; ++i){
-	// 	cout<<i<<"\t";
-	// 	cout<<mazeGraph[i].size()<< " ";
-	// 	for(auto p: mazeGraph[i]){
-	// 		cout<<p<<" ";
-	// 	}
-	// 	cout<<endl;
-	// }
-	//cout<<"Start: "<<start<<endl<<"Finish: "<<finish<<endl;
+	for(i=0; i<nodeCounter; ++i){
+		cout<<i<<"\t";
+		cout<<mazeGraph[i].size()<< " ";
+		for(auto p: mazeGraph[i]){
+			cout<<p<<" ";
+		}
+		cout<<endl;
+	}
+	cout<<"Start: "<<start<<endl<<"Finish: "<<finish<<endl;
 
 	q.push(start);			// starting from the vertex 0
 	bfs();				//  BFS graph traversal on the graph found from the maze
@@ -136,23 +140,29 @@ int main(void){
 
 	cout<<endl;
 	
-	if(vis[finish])
-		cout<<"Destination can be reached from the current position."<<endl;
-	else{
-		cout<<"There is no path to reach the destination."<<endl;
-		return 0;
-	} 
+	// if(vis[finish])
+	// 	cout<<"Destination can be reached from the current position."<<endl;
+	// else{
+	// 	cout<<"There is no path to reach the destination."<<endl;
+	// 	return 0;
+	// } 
 
-	cout<<"Distance from the current position: "<<dist[finish]<<endl;
+	// cout<<"Distance from the current position: "<<dist[finish]<<endl;
 
-	cout<<"Path from the current position to destination: ";
-	while(1){
-		cout<<s.top();
-		s.pop();
-		if(s.empty())
-			break;
-		cout<<" --> ";
-	}
+	// cout<<"Path from the current position to destination: ";
+	// while(1){
+	// 	cout<<s.top();
+	// 	s.pop();
+	// 	if(s.empty())
+	// 		break;
+	// 	cout<<" --> ";
+	// }
+
+	AStarSearch aStarSearchObj(row, col, nodeCounter, mazeGraph);
+
+	aStarSearchObj.printGraph();
+
+
 
 	return 0;
 }
