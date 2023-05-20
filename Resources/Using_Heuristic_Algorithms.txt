@@ -1,0 +1,6 @@
+1. A* Search algorithm
+2. Bidirectional Search algorithm
+3. Landmark Path algorithm
+4. Biased Randomization Search algorithm
+5. Jump Point Search algorithm
+6. Theta* Search algorithm
