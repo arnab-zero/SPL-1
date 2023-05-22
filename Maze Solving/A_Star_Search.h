@@ -8,11 +8,12 @@ class AStarSearch{
 
 private: 
     struct Cell{
-        int row, col;
+        int node, row, col;
         int f, g, h;
         bool obstacle;
 
-        Cell(int r, int c) :
+        Cell(int i, int r, int c) :
+            node(i),
             row(r),
             col(c),
             f(0),
@@ -21,6 +22,7 @@ private:
             obstacle(false){}
     };
 
+private:
     // a custom comparator for priority queue based on f
     struct CompareCells{
         bool operator() (const Cell &a, const Cell &b){     // **
@@ -28,6 +30,7 @@ private:
         }
     };
 
+private:
     // calculates Manhattan distance heuristic 
     int calculateHeuristic(const Cell &current, const Cell &destination){
         int rowDifference = abs(current.row-destination.row);
@@ -55,16 +58,23 @@ private:
 
 
     public:
-    vector<Cell> solveMaze(int numberOfNodes, int mazeRow, int mazeCol, int source, int destination, vector<vector<int>> &indexToNode, vector<pair<int,int>> &nodeToIndex){
+
+    // stores the optimal path
+    vector<Cell> optimalPath;
+
+    void solveMaze(int numberOfNodes, int mazeRow, int mazeCol, int source, int destination, vector<vector<int>> &indexToNode, vector<pair<int,int>> &nodeToIndex){
 
         // priority queue for open list 
         priority_queue<Cell, vector<Cell>, CompareCells> openList;
+
+        // map to keep track of elements
+        map<int, bool> openCellMap;
 
         vector<Cell> mazeCell;
 
         // initializing the nodes as Cell 
         for(int i=0; i<numberOfNodes; ++i){
-            mazeCell[i] = Cell(nodeToIndex[i].first, nodeToIndex[i].second);
+            mazeCell[i] = Cell(i, nodeToIndex[i].first, nodeToIndex[i].second);
         }
 
         // specifying the source and the destination cell
@@ -75,6 +85,8 @@ private:
         startCell.h = calculateHeuristic(startCell, destinationCell);
         startCell.f = startCell.h;
         openList.push(startCell);
+        openCellMap[indexToNode[startCell.row][startCell.col]] = true;
+
 
         // the possible moves that can be made from a Cell in the maze (up, down, left, right)
         int directionAtRow[] = {-1, -1, 0, 0};
@@ -86,12 +98,80 @@ private:
         // traversing the graph for optimal path finding
         while(!openList.empty()){
 
-        
+            Cell currentCell = openList.top();
+            openList.pop();
+            openCellMap[indexToNode[currentCell.row][currentCell.col]] = false;
+
+            // checks if current cell is the destination cell
+            if(currentCell.row == destinationCell.row and currentCell.col==destinationCell.col){
+                
+                //vector<Cell> optimalPath;
+                Cell cell = currentCell;
+
+                while(cell.row != startCell.row or cell.col!=startCell.col){
+                    optimalPath.push_back(cell);
+                    cell = parent[cell.row][cell.col];
+                }
+
+                optimalPath.push_back(startCell);
+
+                reverse(optimalPath.begin(), optimalPath.end());
+            }
+
+            // to the neighbor cells
+            for(int i=0; i<4; ++i){
+                int neighborRow = currentCell.row + directionAtRow[i];
+                int neighborCol = currentCell.col + directionAtCol[i];
+
+                if(isValidCell(neighborRow, neighborCol, mazeRow, mazeCol) and indexToNode[neighborRow][neighborCol] != -1){
+                    Cell neighborCell = mazeCell[indexToNode[neighborRow][neighborCol]];
+
+                    int updatedG = currentCell.g + 1;
+
+                    // checking if its in the open list
+                    bool isOpen = false;
+
+                    if(openCellMap.count(neighborCell.node) and openCellMap[neighborCell.node]==true){
+                        isOpen = true;
+                    }
+
+
+                    // checking if the neighbor cell is already in the closed list
+                    bool isClosed = (parent[neighborCell.row][neighborCell.col].row != -1);
+
+                    // updating the neighbor if it's a better choice;
+                    if(!isOpen and !isClosed){
+                        neighborCell.g = updatedG;
+                        neighborCell.h = calculateHeuristic(neighborCell, destinationCell);
+                        neighborCell.f = neighborCell.g + neighborCell.h;
+                        openList.push(neighborCell);
+                        parent[neighborCell.row][neighborCell.col] = currentCell;
+                    }
+                    else if(isOpen and updatedG < neighborCell.g){
+                        neighborCell.g = updatedG;
+                        neighborCell.f = neighborCell.g + neighborCell.h;
+                        parent[neighborCell.row][neighborCell.col] = currentCell;
+                    }
+                    
+                }
+               
+            }
 
         }
 
     }
 
+    void printPath(){
+
+        cout<<"A* search result: \n";
+
+        for(auto i: optimalPath){
+            cout<<i.node<<" ";
+        }
+
+        cout<<endl;
+
+    }
 
 };
 
