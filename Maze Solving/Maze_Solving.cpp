@@ -222,7 +222,7 @@ int main(void){
 
     //obj.BFS(mazeGraph, nodeCounter+1, 0);
 
-    obj.BDS(mazeGraph, nodeCounter+1, start, finish);
+    obj.BDS(mazeGraph, nodeCounter+1, start, finish, weight);
 
 
 	return 0;
