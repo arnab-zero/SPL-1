@@ -6,6 +6,9 @@
 #include <cmath>
 #include <stack>
 #include <bits/stdc++.h>
+
+#include "Bidirectional_Search.h"
+
 using namespace std;
 
 #define vi vector<int>
@@ -160,6 +163,7 @@ int main(void){
 
 
 
+
 	// // Checking if the adjacency list output is correct
 	// for(i=0; i<nodeCounter+1; ++i){
 	// 	cout<<i<<"\t";
@@ -213,6 +217,12 @@ int main(void){
 	// AStarSearch obj;
 	// obj.solveMaze(nodeCounter, row, col, start, finish, indexToNode, nodeToIndex);
 
+
+    Graph obj;
+
+    //obj.BFS(mazeGraph, nodeCounter+1, 0);
+
+    obj.BDS(mazeGraph, nodeCounter+1, start, finish);
 
 
 	return 0;
