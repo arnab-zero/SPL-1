@@ -115,55 +115,100 @@ int main(void){
 		}
 	}
 
-	// Checking if the adjacency list output is correct
-	for(i=0; i<nodeCounter; ++i){
-		cout<<i<<"\t";
-		cout<<mazeGraph[i].size()<< " ";
-		for(auto p: mazeGraph[i]){
-			cout<<p<<" ";
-		}
-		cout<<endl;
-	}
-	cout<<"Start: "<<start<<endl<<"Finish: "<<finish<<endl;
 
-	q.push(start);			// starting from the vertex 0
-	bfs();				//  BFS graph traversal on the graph found from the maze
+    // Creating a 2D array that holds edge weights in the graph
+    vector<vector<int>> weight(nodeCounter+1, vector<int>(nodeCounter, -1));
+
+    for(int i=0; i<nodeCounter+1; ++i){
+        int currentNodeRow = nodeToIndex[i].first;
+        int currentNodeCol = nodeToIndex[i].second;
+
+        for(auto neighborNode: mazeGraph[i]){
+            int neighborNodeRow = nodeToIndex[neighborNode].first;
+            int neighborNodeCol = nodeToIndex[neighborNode].second;
+
+            if(currentNodeRow == neighborNodeRow){
+                int distance = abs(currentNodeCol - neighborNodeCol);
+
+                weight[i][neighborNode] = distance;
+                weight[neighborNode][i] = distance;
+            }
+        }
+    }
+
+    // for(int i=0; i<nodeCounter+1; ++i){
+    //     cout<<"vertex: "<<i<<endl;
+    //     cout<<"row "<<nodeToIndex[i].first<<" col "<<nodeToIndex[i].second<<endl;
+
+    //     for(auto p: mazeGraph[i]){
+    //         cout<<"for "<<p<<" row "<<nodeToIndex[p].first<<" col "<<nodeToIndex[p].second;
+    //         cout<<" weight is "<<weight[i][p]<<endl;
+    //     }
+
+    //     cout<<endl;
+    // }
+
+    // for(int i=0; i<row; ++i){
+    //     for(int j=0; j< col; ++j){
+    //         int node = indexToNode[i][j];
+    //         cout<<" col "<<j<<" row "<<i<<" node "<< indexToNode[i][j]<<endl;
+    //         cout<<"node "<<node<<" col "<<nodeToIndex[node].second<<" row "<<nodeToIndex[node].first<<endl<<endl;
+    //     }
+    //     cout<<endl<<endl<<endl;
+    // }
+
+
+
+
+	// // Checking if the adjacency list output is correct
+	// for(i=0; i<nodeCounter+1; ++i){
+	// 	cout<<i<<"\t";
+	// 	cout<<mazeGraph[i].size()<< " ";
+	// 	for(auto p: mazeGraph[i]){
+	// 		cout<<p<<" ";
+	// 	}
+	// 	cout<<endl;
+	// }
+	// cout<<"Start: "<<start<<endl<<"Finish: "<<finish<<endl;
+
+	// q.push(start);			// starting from the vertex 0
+	// bfs();				//  BFS graph traversal on the graph found from the maze
 
 	// cout<<"After BFS: "<<endl;
 	// cout<<"Vertex"<<"\t"<<"Visited"<<" "<<"Distance"<<" "<<"Previous"<<endl;
 	// for(i=0; i<nodeCounter; ++i){
 	// 	cout<<i<<"\t"<<vis[i]<<" "<<dist[i]<<" "<<previous[i]<<endl;
 	// }
-	//cout<<finish<<"\t"<<vis[finish]<<" "<<dist[finish]<<" "<<previous[finish]<<endl;
+	// cout<<finish<<"\t"<<vis[finish]<<" "<<dist[finish]<<" "<<previous[finish]<<endl;
 	
 	stack<int> s;		// stack to store the path from destination to current position.
 
-	int currentNode = finish;		// starting from destination.
-	s.push(currentNode);		// destination vertex pushed to the stack first.
-	while(currentNode != start){
-		currentNode = previous[currentNode];		// previous vertex would be new currentNode.
-		s.push(currentNode);		// current node pushed to the stack.
-	}
+	// int currentNode = finish;		// starting from destination.
+	// s.push(currentNode);		// destination vertex pushed to the stack first.
+	// while(currentNode != start){
+	// 	currentNode = previous[currentNode];		// previous vertex would be new currentNode.
+	// 	s.push(currentNode);		// current node pushed to the stack.
+	// }
 
-	cout<<endl;
+	// cout<<endl;
 	
-	if(vis[finish])
-		cout<<"Destination can be reached from the current position."<<endl;
-	else{
-		cout<<"There is no path to reach the destination."<<endl;
-		return 0;
-	} 
+	// if(vis[finish])
+	// 	cout<<"Destination can be reached from the current position."<<endl;
+	// else{
+	// 	cout<<"There is no path to reach the destination."<<endl;
+	// 	return 0;
+	// } 
 
-	cout<<"Distance from the current position: "<<dist[finish]<<endl;
+	// cout<<"Distance from the current position: "<<dist[finish]<<endl;
 
-	cout<<"Path from the current position to destination: ";
-	while(1){
-		cout<<s.top();
-		s.pop();
-		if(s.empty())
-			break;
-		cout<<" --> ";
-	}
+	// cout<<"Path from the current position to destination: ";
+	// while(1){
+	// 	cout<<s.top();
+	// 	s.pop();
+	// 	if(s.empty())
+	// 		break;
+	// 	cout<<" --> ";
+	// }
 
 	// AStarSearch obj;
 	// obj.solveMaze(nodeCounter, row, col, start, finish, indexToNode, nodeToIndex);
