@@ -1,5 +1,11 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <map>
+#include <algorithm>
+#include <cmath>
+#include <stack>
 #include <bits/stdc++.h>
-#include "A_Star_Search.h"
 using namespace std;
 
 #define vi vector<int>
@@ -9,8 +15,8 @@ using namespace std;
 #define ROW 100			// row count for indexToNode table
 #define COL 100			// col count for indexToNode table
 
-vector<vi> indexToNode(ROW, vi(COL, -1));		// points index to node
-vector<pair<int, int>> nodeToIndex;				// points node to index
+vector<vi> indexToNode(ROW, vi(COL, -1));		// points index of node
+vector<pair<int, int>> nodeToIndex;				// points co-ordinate of indexed nodes
 vector<vi> mazeGraph(ROW);			// adjacency list for derived graph from the maze
 queue<int> q;			// queue
 vi vis(100);			// if a vertex is visited or not
@@ -42,6 +48,7 @@ void bfs(){
 		bfs();
 	}
 }
+
 
 // main function
 int main(void){
@@ -140,27 +147,26 @@ int main(void){
 
 	cout<<endl;
 	
-	// if(vis[finish])
-	// 	cout<<"Destination can be reached from the current position."<<endl;
-	// else{
-	// 	cout<<"There is no path to reach the destination."<<endl;
-	// 	return 0;
-	// } 
+	if(vis[finish])
+		cout<<"Destination can be reached from the current position."<<endl;
+	else{
+		cout<<"There is no path to reach the destination."<<endl;
+		return 0;
+	} 
 
-	// cout<<"Distance from the current position: "<<dist[finish]<<endl;
+	cout<<"Distance from the current position: "<<dist[finish]<<endl;
 
-	// cout<<"Path from the current position to destination: ";
-	// while(1){
-	// 	cout<<s.top();
-	// 	s.pop();
-	// 	if(s.empty())
-	// 		break;
-	// 	cout<<" --> ";
-	// }
+	cout<<"Path from the current position to destination: ";
+	while(1){
+		cout<<s.top();
+		s.pop();
+		if(s.empty())
+			break;
+		cout<<" --> ";
+	}
 
-	AStarSearch aStarSearchObj(row, col, nodeCounter, mazeGraph);
-
-	aStarSearchObj.printGraph();
+	// AStarSearch obj;
+	// obj.solveMaze(nodeCounter, row, col, start, finish, indexToNode, nodeToIndex);
 
 
 
