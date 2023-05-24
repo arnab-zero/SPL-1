@@ -49,6 +49,8 @@ class A_Star_Class{
                      vector<vector<int>>& weight)
         {
 
+            this->source = source;
+            this->destination = destination;
             this->rowCount = rowCount;
             this->colCount = colCount;
             this->numberOfVertices = numberOfVertices;
@@ -132,11 +134,37 @@ class A_Star_Class{
 
         int printPath(){
 
+            cout<<"The path is: "<<endl;
+
+            stack<int> path;
+
+            int temp = destination;
+            path.push(temp);
+
+            while(cell[temp].parent != -1){
+
+                temp = cell[temp].parent;
+                path.push(temp);
+            }
+
+            while(!path.empty()){
+
+                cout<<path.top();
+                path.pop();
+
+                if(!path.empty())
+                    cout<<"--> ";
+            }
+
+            cout<<endl;
+
         }
 
 
     public:
         void aStarSearch(){
+
+            cout<<source << " "<< destination<<endl;
 
             if(!isValidCell(source)){
                 cout<<"Invalid source vertex."<<endl;
@@ -158,13 +186,69 @@ class A_Star_Class{
             for(int i=0; i<numberOfVertices; ++i)
                 closedList[i] = false;
 
+            
+            cout<<"yes"<<endl;
+
             cell[source].f = 0;
             cell[source].g = 0;
             cell[source].h = 0;
 
-            
+            cell[source].parent = -1;
 
+            set<pair<int, int>> openList;
 
+            openList.insert({cell[source].f, source});
+
+            bool destinationReached = false;
+
+            while(!openList.empty()){
+
+                auto firstElement = *openList.begin();
+                openList.erase(openList.begin());
+
+                int currentNode = firstElement.second;
+
+                closedList[currentNode] = true;
+
+                vector<int>:: iterator i;
+
+                for(i = mazeGraph[currentNode].begin(); i != mazeGraph[currentNode].end(); ++i){
+
+                    if(isDestination(*i)){
+
+                        cout<<"Destination vertex can be reached from the source."<<endl;
+
+                        cell[*i].parent = currentNode;
+                        printPath();        
+                        destinationReached = true;
+                        return;
+                    }
+                    else if(closedList[*i] == false){
+
+                        int newGValue = cell[*i].g + weight[currentNode][*i];
+                        int newHValue = calculateHeuristic(*i);
+
+                        int newFValue = newGValue + newHValue;
+
+                        if(cell[*i].f == INT_MAX or cell[*i].f > newFValue){
+                            openList.insert({newFValue, *i});
+
+                            cell[*i].f = newFValue;
+                            cell[*i].g = newGValue;
+                            cell[*i].h = newHValue;
+
+                            cell[*i].parent = currentNode;
+                        }
+
+                    }
+
+                }
+
+            }
+
+            if(!destinationReached){
+                cout<<"Can not reach the destination."<<endl;
+            }
 
         }
 
