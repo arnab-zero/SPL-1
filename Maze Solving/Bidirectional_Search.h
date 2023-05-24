@@ -22,11 +22,14 @@ class Graph{
 
 
     public:
-    void BDS(vector<vi> mazeGraph, int numberOfVertices, int source, int destination);
+
+    void BDS(vector<vi> mazeGraph, vector<pair<int,int>> nodeToIndex, int numberOfVertices, int source, int destination, vector<vi> weight);
     void BFS(vector<vi> mazeGraph, list<int> &queue, bool* isVisited, int* previous);
     int visitedIntersect(int numberOfVertices, bool* forward_visited, bool* backward_visited);
-    void printPathBDS();
+    void printPathBDS(vector<vi> mazeGraph, vector<pair<int,int>> nodeToIndex, vector<vi> weight, int source, int destination, int* forward_previous, int* backward_previous, int intersectNode);
     void printQueue(list<int> queue);
+    void printCoordinate(list<int> path, vector<pair<int, int>> nodeToIndex);
+
 };
 
 
@@ -97,8 +100,8 @@ void Graph::BFS(vector<vi> mazeGraph, list<int> &queue, bool* isVisited, int* pr
     for(auto i: mazeGraph[current]){
 
         //cout<<"check1"<<endl;
-        cout<<"element: "<<i<<endl;
-        cout<<"element visited: "<<i<<" : "<<isVisited[i]<<endl;
+        // cout<<"element: "<<i<<endl;
+        // cout<<"element visited: "<<i<<" : "<<isVisited[i]<<endl;
         
         if(!isVisited[i]){
             previous[i] = current;
@@ -111,14 +114,12 @@ void Graph::BFS(vector<vi> mazeGraph, list<int> &queue, bool* isVisited, int* pr
             // cout<<"update: "<<endl;
         }
 
-        printQueue(queue);
-
     }
 
 }
 
 
-void Graph::BDS(vector<vi> mazeGraph, int numberOfVertices, int source, int destination){
+void Graph::BDS(vector<vi> mazeGraph, vector<pair<int,int>> nodeToIndex, int numberOfVertices, int source, int destination, vector<vi> weight){
 
     bool forward_visited[numberOfVertices];
     bool backward_visited[numberOfVertices];
@@ -174,7 +175,7 @@ void Graph::BDS(vector<vi> mazeGraph, int numberOfVertices, int source, int dest
 
         if(intersectNode != -1){
             cout<<"Intersect at "<<intersectNode<<endl;
-            printPathBDS();     // left
+            printPathBDS(mazeGraph, nodeToIndex, weight, source, destination, forward_previous, backward_previous, intersectNode);     // left
             return;
         }
 
@@ -183,12 +184,71 @@ void Graph::BDS(vector<vi> mazeGraph, int numberOfVertices, int source, int dest
 }
 
 
-void Graph::printPathBDS(){
+void Graph::printPathBDS(vector<vi> mazeGraph, vector<pair<int, int>> nodeToIndex, vector<vi> weight,  int source, int destination, int* forward_previous, int* backward_previous, int intersectNode){
 
-    
+    int currentNode, pathLength = 0;
 
+    list<int> path;
 
+    currentNode = intersectNode;
 
+    while(currentNode != -1){
+
+        path.push_front(currentNode);
+
+        int previousNode = forward_previous[currentNode];
+
+        if(previousNode != -1){
+            pathLength += weight[currentNode][previousNode];
+        }
+
+        currentNode = previousNode;
+
+    }
+
+    currentNode = intersectNode;
+
+    while(currentNode != -1){
+
+        path.push_back(currentNode);
+
+        int previousNode = backward_previous[currentNode];
+
+        if(previousNode != -1){
+            pathLength += weight[currentNode][previousNode];
+        }
+
+        currentNode = previousNode;
+    }
+
+    vector<int>:: iterator i;
+
+    cout<<"Length of the path is: "<<pathLength<<endl;
+
+    cout<<"The path is: "<<endl;
+
+    for(auto i = path.begin(); i != path.end(); ++i){
+        cout<<*i<<"  ";
+    }
+
+    cout<<endl;
+
+    printCoordinate(path, nodeToIndex);
+
+}
+
+// yet to fix
+void Graph::printCoordinate(list<int> path, vector<pair<int, int>> nodeToIndex){
+
+    vector<int>:: iterator i;
+
+    cout<<"Path as coordinates in the maze: "<<endl;
+
+    for(auto i = path.begin(); i != path.end(); ++i){
+        cout<<"("<<nodeToIndex[*i].first<<", "<<nodeToIndex[*i].second<<") --> ";
+    }
+
+    cout<<endl;
 }
 
 
