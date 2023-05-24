@@ -5,9 +5,11 @@
 #include <algorithm>
 #include <cmath>
 #include <stack>
-#include <bits/stdc++.h>
+#include <chrono>
 
+#include "Breadth_First_Search.h"
 #include "Bidirectional_Search.h"
+#include "A_Star_Search.h"
 
 using namespace std;
 
@@ -29,34 +31,11 @@ vi previous(100);		// previous vertex of each vertex
 int nodeCounter = -1;			// starts nodes from 0
 int start, finish;		// start = start vertex in the graph, finish = destination in the graph		
 
-// BFS function for graph traversal
-void bfs(){
-	if(q.empty())
-		return;
-	
-	int current = q.front();
-	q.pop();
-
-	if(vis[current])
-		return;
-	
-	++vis[current];
-
-	for(auto i: mazeGraph[current]){
-		if(!vis[i]){
-			previous[i] = current;
-			dist[i] = dist[current] + 1;
-			q.push(i);
-		}
-		bfs();
-	}
-}
-
 
 // main function
 int main(void){
 
-	freopen("Maze_Input.txt", "r", stdin);
+	freopen("Maze_Input2.txt", "r", stdin);
 
 	int row, col;
 	cout<<"Enter row and column count for the maze: ";
@@ -120,7 +99,7 @@ int main(void){
 
 
     // Creating a 2D array that holds edge weights in the graph
-    vector<vector<int>> weight(nodeCounter+1, vector<int>(nodeCounter, -1));
+    vector<vector<int>> weight(nodeCounter+1, vector<int>(nodeCounter+1, -1));
 
     for(int i=0; i<nodeCounter+1; ++i){
         int currentNodeRow = nodeToIndex[i].first;
@@ -151,18 +130,6 @@ int main(void){
     //     cout<<endl;
     // }
 
-    // for(int i=0; i<row; ++i){
-    //     for(int j=0; j< col; ++j){
-    //         int node = indexToNode[i][j];
-    //         cout<<" col "<<j<<" row "<<i<<" node "<< indexToNode[i][j]<<endl;
-    //         cout<<"node "<<node<<" col "<<nodeToIndex[node].second<<" row "<<nodeToIndex[node].first<<endl<<endl;
-    //     }
-    //     cout<<endl<<endl<<endl;
-    // }
-
-
-
-
 
 	// // Checking if the adjacency list output is correct
 	// for(i=0; i<nodeCounter+1; ++i){
@@ -175,54 +142,42 @@ int main(void){
 	// }
 	// cout<<"Start: "<<start<<endl<<"Finish: "<<finish<<endl;
 
-	// q.push(start);			// starting from the vertex 0
-	// bfs();				//  BFS graph traversal on the graph found from the maze
-
-	// cout<<"After BFS: "<<endl;
-	// cout<<"Vertex"<<"\t"<<"Visited"<<" "<<"Distance"<<" "<<"Previous"<<endl;
-	// for(i=0; i<nodeCounter; ++i){
-	// 	cout<<i<<"\t"<<vis[i]<<" "<<dist[i]<<" "<<previous[i]<<endl;
-	// }
-	// cout<<finish<<"\t"<<vis[finish]<<" "<<dist[finish]<<" "<<previous[finish]<<endl;
 	
-	stack<int> s;		// stack to store the path from destination to current position.
+    BreadthFirstSearchClass bfsObj(nodeCounter+1, row, col, start, finish, mazeGraph, indexToNode, nodeToIndex);
+	bfsObj.bfs();
 
-	// int currentNode = finish;		// starting from destination.
-	// s.push(currentNode);		// destination vertex pushed to the stack first.
-	// while(currentNode != start){
-	// 	currentNode = previous[currentNode];		// previous vertex would be new currentNode.
-	// 	s.push(currentNode);		// current node pushed to the stack.
-	// }
-
-	// cout<<endl;
-	
-	// if(vis[finish])
-	// 	cout<<"Destination can be reached from the current position."<<endl;
-	// else{
-	// 	cout<<"There is no path to reach the destination."<<endl;
-	// 	return 0;
-	// } 
-
-	// cout<<"Distance from the current position: "<<dist[finish]<<endl;
-
-	// cout<<"Path from the current position to destination: ";
-	// while(1){
-	// 	cout<<s.top();
-	// 	s.pop();
-	// 	if(s.empty())
-	// 		break;
-	// 	cout<<" --> ";
-	// }
-
-	// AStarSearch obj;
-	// obj.solveMaze(nodeCounter, row, col, start, finish, indexToNode, nodeToIndex);
-
-
+    cout<<"Result of Bidirectional Search: "<<endl;
     Graph obj;
 
-    //obj.BFS(mazeGraph, nodeCounter+1, 0);
+    // beginning time of bidirectional search on the Maze
+    auto bds_clock_begin = chrono::system_clock::now();
 
-    obj.BDS(mazeGraph, nodeCounter+1, start, finish, weight);
+    obj.BDS(mazeGraph, nodeToIndex, nodeCounter+1, start, finish, weight);
+
+    // finishing time stamp of bidirectional search on the maze
+    auto bds_clock_end = chrono::system_clock::now();
+
+    auto time_elapsed_for_bds = chrono::duration_cast<chrono::nanoseconds>(bds_clock_end - bds_clock_begin);
+
+    cout<<"Time elapsed for BDS on maze: "<< time_elapsed_for_bds.count();
+    cout<<" nanoseconds."<<endl;
+
+
+	A_Star_Class a_star_obj(row, col, start, finish, nodeCounter+1, mazeGraph, indexToNode, nodeToIndex, weight);
+
+	cout<<endl<<endl<<"Result of A* search: "<<endl;
+
+	// beginning time of A* search on the maze
+	auto a_star_search_beginning = chrono::system_clock::now();
+	
+	a_star_obj.aStarSearch();
+
+	// finishing time of A* search on the maze
+	auto a_star_search_ending = chrono::system_clock::now();
+
+	auto time_elapsed_for_a_star = chrono::duration_cast<chrono::nanoseconds>(a_star_search_ending - a_star_search_beginning);
+
+	cout<<"Time elapsed for A* search on the maze: " << time_elapsed_for_a_star.count() << " nanoseconds" <<endl;
 
 
 	return 0;
