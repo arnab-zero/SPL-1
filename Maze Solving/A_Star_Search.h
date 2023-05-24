@@ -138,9 +138,31 @@ class A_Star_Class{
     public:
         void aStarSearch(){
 
-            if(isValidCell()){
-                
+            if(!isValidCell(source)){
+                cout<<"Invalid source vertex."<<endl;
+                return;
             }
+            
+            if(!isValidCell(destination)){
+                cout<<"Invalid source vertex."<<endl;
+                return;
+            }
+
+            if(isDestination(source)){
+                cout<<"Already at the destination."<<endl;
+                return;
+            }
+
+            vector<bool> closedList(numberOfVertices);
+
+            for(int i=0; i<numberOfVertices; ++i)
+                closedList[i] = false;
+
+            cell[source].f = 0;
+            cell[source].g = 0;
+            cell[source].h = 0;
+
+            
 
 
 
