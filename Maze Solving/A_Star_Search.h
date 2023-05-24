@@ -1,180 +1,153 @@
-#ifndef A_STAR_SEARCH_H
-#define A_STAR_SEARCH_H
+#ifndef A_Star_Search
 
-#include<bits/stdc++.h>
+#define A_Star_Search
+
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <list>
+#include <algorithm>
+#include <stdlib.h>
+#include <bits/stdc++.h>
+
 using namespace std;
 
-class AStarSearch{
+struct Cell{
+    
+    int row;
+    int col;
+    int parent;
 
-private: 
-    struct Cell{
-        int node, row, col;
-        int f, g, h;
-        bool obstacle;
-
-        Cell(int i, int r, int c) :
-            node(i),
-            row(r),
-            col(c),
-            f(0),
-            g(0),
-            h(0), 
-            obstacle(false){}
-    };
-
-private:
-    // a custom comparator for priority queue based on f
-    struct CompareCells{
-        bool operator() (const Cell &a, const Cell &b){     // **
-            return a.f > b.f;
-        }
-    };
-
-private:
-    // calculates Manhattan distance heuristic 
-    int calculateHeuristic(const Cell &current, const Cell &destination){
-        int rowDifference = abs(current.row-destination.row);
-        int colDifference = abs(current.col-destination.col);
-
-        return rowDifference + colDifference;
-    }
-
-    // Function to check if a cell from the maze is within bounds or not
-    int isValidCell(int row, int col, int mazeRow, int mazeCol){
-        if(row < 0)
-            return 0;
-        
-        if(row > mazeRow)
-            return 0;
-
-        if(col < 0)
-            return 0;
-
-        if(col > mazeCol)
-            return 0;
-
-        return 1;
-    }
-
-
-    public:
-
-    // stores the optimal path
-    vector<Cell> optimalPath;
-
-    void solveMaze(int numberOfNodes, int mazeRow, int mazeCol, int source, int destination, vector<vector<int>> &indexToNode, vector<pair<int,int>> &nodeToIndex){
-
-        // priority queue for open list 
-        priority_queue<Cell, vector<Cell>, CompareCells> openList;
-
-        // map to keep track of elements
-        map<int, bool> openCellMap;
-
-        vector<Cell> mazeCell;
-
-        // initializing the nodes as Cell 
-        for(int i=0; i<numberOfNodes; ++i){
-            mazeCell[i] = Cell(i, nodeToIndex[i].first, nodeToIndex[i].second);
-        }
-
-        // specifying the source and the destination cell
-        Cell startCell = mazeCell[source];
-        Cell destinationCell = mazeCell[destination];
-
-        // initializing the starting Cell
-        startCell.h = calculateHeuristic(startCell, destinationCell);
-        startCell.f = startCell.h;
-        openList.push(startCell);
-        openCellMap[indexToNode[startCell.row][startCell.col]] = true;
-
-
-        // the possible moves that can be made from a Cell in the maze (up, down, left, right)
-        int directionAtRow[] = {-1, -1, 0, 0};
-        int directionAtCol[] = {0, 0, -1, -1};
-
-        // 2d vector to store the parent cells for each cell in the maze
-        vector<vector<Cell>> parent (mazeRow, vector<Cell>(mazeCol));
-
-        // traversing the graph for optimal path finding
-        while(!openList.empty()){
-
-            Cell currentCell = openList.top();
-            openList.pop();
-            openCellMap[indexToNode[currentCell.row][currentCell.col]] = false;
-
-            // checks if current cell is the destination cell
-            if(currentCell.row == destinationCell.row and currentCell.col==destinationCell.col){
-                
-                //vector<Cell> optimalPath;
-                Cell cell = currentCell;
-
-                while(cell.row != startCell.row or cell.col!=startCell.col){
-                    optimalPath.push_back(cell);
-                    cell = parent[cell.row][cell.col];
-                }
-
-                optimalPath.push_back(startCell);
-
-                reverse(optimalPath.begin(), optimalPath.end());
-            }
-
-            // to the neighbor cells
-            for(int i=0; i<4; ++i){
-                int neighborRow = currentCell.row + directionAtRow[i];
-                int neighborCol = currentCell.col + directionAtCol[i];
-
-                if(isValidCell(neighborRow, neighborCol, mazeRow, mazeCol) and indexToNode[neighborRow][neighborCol] != -1){
-                    Cell neighborCell = mazeCell[indexToNode[neighborRow][neighborCol]];
-
-                    int updatedG = currentCell.g + 1;
-
-                    // checking if its in the open list
-                    bool isOpen = false;
-
-                    if(openCellMap.count(neighborCell.node) and openCellMap[neighborCell.node]==true){
-                        isOpen = true;
-                    }
-
-
-                    // checking if the neighbor cell is already in the closed list
-                    bool isClosed = (parent[neighborCell.row][neighborCell.col].row != -1);
-
-                    // updating the neighbor if it's a better choice;
-                    if(!isOpen and !isClosed){
-                        neighborCell.g = updatedG;
-                        neighborCell.h = calculateHeuristic(neighborCell, destinationCell);
-                        neighborCell.f = neighborCell.g + neighborCell.h;
-                        openList.push(neighborCell);
-                        parent[neighborCell.row][neighborCell.col] = currentCell;
-                    }
-                    else if(isOpen and updatedG < neighborCell.g){
-                        neighborCell.g = updatedG;
-                        neighborCell.f = neighborCell.g + neighborCell.h;
-                        parent[neighborCell.row][neighborCell.col] = currentCell;
-                    }
-                    
-                }
-               
-            }
-
-        }
-
-    }
-
-    void printPath(){
-
-        cout<<"A* search result: \n";
-
-        for(auto i: optimalPath){
-            cout<<i.node<<" ";
-        }
-
-        cout<<endl;
-
-    }
+    int f, g, h;    // f = g+h
 
 };
 
+
+class A_Star_Class{
+
+    public:
+        int numberOfVertices;
+        int rowCount;
+        int colCount;
+        int source;
+        int destination;
+        vector<vector<int>> mazeGraph;
+        vector<vector<int>> indexToNode;
+        vector<pair<int, int>> nodeToIndex;
+        vector<vector<int>> weight;
+        vector<Cell> cell;
+
+        // class constructor
+        A_Star_Class(int rowCount,
+                     int colCount, 
+                     int source, 
+                     int destination, 
+                     int numberOfVertices, 
+                     vector<vector<int>>& mazeGraph, 
+                     vector<vector<int>>& indexToNode, 
+                     vector<pair<int,int>>& nodeToIndex, 
+                     vector<vector<int>>& weight)
+        {
+
+            this->rowCount = rowCount;
+            this->colCount = colCount;
+            this->numberOfVertices = numberOfVertices;
+            this->mazeGraph = mazeGraph;
+            this->indexToNode = indexToNode;
+            this->nodeToIndex = nodeToIndex;
+            this->weight = weight;
+
+            cell = createCell(numberOfVertices);
+
+        }
+
+        // void printCell(){
+
+        //     for(int i=0; i<numberOfVertices; ++i){
+        //         cout<<i<<" "<<cell[i].row<<" "<<cell[i].col<<" "<<cell[i].parent<<endl;
+        //     }
+
+        // }
+
+    private: 
+        vector<Cell> createCell(int numberOfVertices){
+
+            vector<Cell> cell(numberOfVertices);
+
+            for(int i=0; i<numberOfVertices; ++i){
+                
+                cell[i].row = nodeToIndex[i].first;
+                cell[i].col = nodeToIndex[i].second;
+
+                cell[i].parent = -1;
+
+                cell[i].f = INT_MAX;
+                cell[i].g = INT_MAX;
+                cell[i].h = INT_MAX;
+
+            }
+
+            return cell;
+
+        }
+
+
+        bool isValidCell(int node){
+            
+            if(cell[node].row < 0)
+                return false;
+            else if(cell[node].row >= rowCount)
+                return false;
+            else if(cell[node].col < 0)
+                return false;
+            else if(cell[node].col >= colCount)
+                return false;
+            
+            return true;
+
+        }
+
+        // left
+        bool isDestination(int node){
+
+            if(cell[node].row == cell[destination].row and cell[node].col == cell[destination].col)
+                return true;
+            
+            return false;
+        }
+
+        // calculates heuristic value of a vertex
+        int calculateHeuristic(int node){
+
+            int rowDifference, colDifference;
+
+            rowDifference = abs(cell[node].row - cell[destination].row);
+            colDifference = abs(cell[node].col - cell[destination].col);
+
+            int heuristicValue = rowDifference + colDifference;
+
+            return heuristicValue;
+
+        }
+
+        int printPath(){
+
+        }
+
+
+    public:
+        void aStarSearch(){
+
+            if(isValidCell()){
+                
+            }
+
+
+
+        }
+
+
+};
 
 
 
